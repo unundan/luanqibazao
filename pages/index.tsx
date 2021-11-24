@@ -5,11 +5,9 @@ class Index extends React.Component<{
   pickDir: string,
 }> {
   render() {
-    if (this.props.pickDir) {
-      return <img src={this.props.pickDir}/>
-    } else {
-      return <div>连个图片都没有看毛线</div>
-    }
+    return <div style={{ position: 'fixed', display: 'flex', width: '100%', height: '100%' }}>
+      {this.props.pickDir ? <img style={{ margin: 'auto' }} src={this.props.pickDir} /> : <div>连个图片都没有看毛线</div>}
+    </div>
   }
 }
 export function getServerSideProps() {
