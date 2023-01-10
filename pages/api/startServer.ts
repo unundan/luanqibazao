@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ServerType } from "../../common/serverTypes";
+import { ServerType } from "../../common/server_types";
 import { startServer } from "../../server/gameServerManager";
 
 type Data = {

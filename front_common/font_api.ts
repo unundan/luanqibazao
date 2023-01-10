@@ -1,5 +1,5 @@
-import { ListArchivesResult, ListGameProcessResult } from "./apiTypes";
-import { GameProcess, ServerType } from "./serverTypes";
+import { ListArchivesResult, ListGameProcessResult } from "../common/api_types";
+import { GameProcess, ServerType } from "../common/server_types";
 
 function getUrl(url: string, params?: Record<string, string>) {
   if (params === undefined) {

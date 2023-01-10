@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ListGameProcessResult } from "../../common/apiTypes";
+import { ListGameProcessResult } from "../../common/api_types";
 import { listGameProcess } from "../../server/gameServerManager";
 
 export default function handler(

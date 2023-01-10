@@ -1,5 +1,5 @@
 import React from "react";
-import { GameProcess, ServerStatus, ServerType } from "../common/serverTypes";
+import { GameProcess, ServerStatus, ServerType } from "../common/server_types";
 import { Card } from "antd";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import {
@@ -8,6 +8,8 @@ import {
   startServer,
   stopServer,
 } from "./font_api";
+import { AppState, wapper } from "../front_common/store";
+import { connect, useSelector } from "react-redux";
 
 interface ServerSpan {
   props: {
@@ -120,52 +122,22 @@ class ArchiveCard extends React.Component {
   }
 }
 
-type ArchiveCardGroupsProp = {
-  archives: string[];
-  gameProcess: GameProcess[];
-};
-type ArchiveCardGroupsState = ArchiveCardGroupsProp;
-interface ArchiveCardGroups {
-  props: ArchiveCardGroupsProp;
-  state: ArchiveCardGroupsState;
+function ArchiveCardGroups() {
+  const gameProcesses = useSelector(
+    (state: AppState) => state.gameProcesses.value.servers
+  );
+  const archives = useSelector((state: AppState) => state.archives.value);
+  return archives.map((archiveName) => {
+    const serverProcesses = gameProcesses.filter(
+      (v) => v.archive == archiveName
+    );
+    return (
+      <ArchiveCard
+        servers={serverProcesses}
+        archive={archiveName}
+        key={`${archiveName}`}
+      ></ArchiveCard>
+    );
+  });
 }
-
-class ArchiveCardGroups extends React.Component {
-  constructor(props: ArchiveCardGroupsProp) {
-    super(props);
-  }
-  ComponentDidMount() {
-    setInterval(async () => {
-      const res1 = await listArchives();
-      const res2 = await listGameProcesses();
-      this.setState({
-        archives: res1.archives,
-        gameProcess: res2.gameProcesses,
-      });
-    }, 2000);
-  }
-  render() {
-    return this.props.archives.map((archiveName) => {
-      const serverProcesses = this.props.gameProcess.filter(
-        (v) => v.archive == archiveName
-      );
-      return (
-        <ArchiveCard
-          servers={serverProcesses}
-          archive={archiveName}
-          key={`${archiveName}`}
-        ></ArchiveCard>
-      );
-    });
-  }
-  //   static async getServerSideProps() {
-  //     return {
-  //       props: {
-  //         archives: await listArchive(),
-  //         gameProcess: await listGameProcess(),
-  //       },
-  //     };
-  //   }
-}
-
 export default ArchiveCardGroups;

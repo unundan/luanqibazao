@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext } from "react";
 import { GetServerSideProps } from "next";
 // 由于 antd 组件的默认文案是英文，所以需要修改为中文
 import dayjs from "dayjs";
@@ -8,12 +8,14 @@ import { LaptopOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 
-import { GameProcess } from "../common/serverTypes";
-import ArchiveCardGroups from "../common/archive_card";
+import { GameProcess } from "../common/server_types";
+import ArchiveCardGroups from "../front_common/archive_card";
 import { listArchive, listGameProcess } from "../server/gameServerManager";
 
-import { Provider } from "react-redux";
-import store from "../common/store";
+import { connect, Provider, useDispatch } from "react-redux";
+import { wapper } from "../front_common/store";
+import { updateAll } from "../front_common/redux_slice/archive_card";
+import { update } from "../front_common/redux_slice/archives";
 
 dayjs.locale("zh-cn");
 
@@ -34,16 +36,11 @@ const items2: MenuProps["items"] = [
   },
 ];
 
-const App: React.FC<{ archives: string[]; gameProcesses: GameProcess[] }> = ({
-  archives,
-  gameProcesses: gameProcess,
-}) => {
+const App: React.FC<{ archives: string[]; gameProcesses: GameProcess[] }> = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
   return (
-    <Provider store={store}>
       <Layout>
         <Header className="header">
           <div className="logo" />
@@ -65,26 +62,27 @@ const App: React.FC<{ archives: string[]; gameProcesses: GameProcess[] }> = ({
             />
           </Sider>
           <Layout style={{ padding: "1em" }}>
-            <Content>
-              <ArchiveCardGroups
-                archives={archives}
-                gameProcess={gameProcess}
-              />
-            </Content>
+            <Content>{ArchiveCardGroups()}</Content>
           </Layout>
         </Layout>
       </Layout>
-    </Provider>
   );
 };
+// export default App;
+connect(state => state)(App)
+export default wapper.withRedux(App);
 
-export default App;
-
-export const getServerSideProps: GetServerSideProps = async (content) => {
-  return {
-    props: {
-      archives: await listArchive(),
-      gameProcesses: await listGameProcess(),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = wapper.getServerSideProps(
+  (store) => async (content) => {
+    const archives = await listArchive();
+    const gameProcesses = await listGameProcess();
+    store.dispatch(updateAll(gameProcesses));
+    store.dispatch(update(archives));
+    return {
+      props: {
+        archives: await listArchive(),
+        gameProcesses: await listGameProcess(),
+      },
+    };
+  }
+);

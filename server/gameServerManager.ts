@@ -1,7 +1,7 @@
 import { exec, spawn } from "child_process";
 import path, { resolve } from "path";
 import * as fs from "fs";
-import { GameProcess, ServerStatus, ServerType } from "../common/serverTypes";
+import { GameProcess, ServerStatus, ServerType } from "../common/server_types";
 
 const gameShell = "dontstarve_dedicated_server_nullrenderer_x64";
 const gameDir = "";

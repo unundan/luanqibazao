@@ -1,4 +1,4 @@
-import { GameProcess } from "./serverTypes";
+import { GameProcess } from "./server_types";
 
 export type ListGameProcessResult = {
   gameProcesses: GameProcess[];
