@@ -73,7 +73,6 @@ export type ArchiveCardProp = {
 };
 interface ArchiveCard {
   props: ArchiveCardProp;
-  archive: string;
 }
 
 class ArchiveCard extends React.Component {
@@ -96,7 +95,7 @@ class ArchiveCard extends React.Component {
         <ServerSpan
           key={`${this.props.archive}_`}
           server={{
-            archive: this.archive,
+            archive: this.props.archive,
             serverType: ServerType.Master,
             parentPort: 0,
             pid: 0,
