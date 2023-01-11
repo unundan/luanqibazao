@@ -8,7 +8,7 @@ import {
   startServer,
   stopServer,
 } from "./font_api";
-import { AppState, wapper } from "../front_common/store";
+import { AppState } from "../front_common/store";
 import { connect, useSelector } from "react-redux";
 
 interface ServerSpan {
@@ -124,7 +124,7 @@ class ArchiveCard extends React.Component {
 
 function ArchiveCardGroups() {
   const gameProcesses = useSelector(
-    (state: AppState) => state.gameProcesses.value.servers
+    (state: AppState) => state.gameProcesses.value
   );
   const archives = useSelector((state: AppState) => state.archives.value);
   return archives.map((archiveName) => {
@@ -140,4 +140,5 @@ function ArchiveCardGroups() {
     );
   });
 }
+export { ArchiveCard };
 export default ArchiveCardGroups;

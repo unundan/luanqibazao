@@ -9,13 +9,14 @@ import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 
 import { GameProcess } from "../common/server_types";
-import ArchiveCardGroups from "../front_common/archive_card";
+import ArchiveCardGroups, { ArchiveCard } from "../front_common/archive_card";
 import { listArchive, listGameProcess } from "../server/gameServerManager";
 
-import { connect, Provider, useDispatch } from "react-redux";
-import { wapper } from "../front_common/store";
+import { connect, Provider, useDispatch, useSelector } from "react-redux";
+import { AppState, wrapper } from "../front_common/store";
 import { updateAll } from "../front_common/redux_slice/archive_card";
 import { update } from "../front_common/redux_slice/archives";
+import { AppProps } from "next/app";
 
 dayjs.locale("zh-cn");
 
@@ -36,43 +37,59 @@ const items2: MenuProps["items"] = [
   },
 ];
 
-const App: React.FC<{ archives: string[]; gameProcesses: GameProcess[] }> = () => {
+const App: React.FC<AppProps> = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  const gameProcesses = useSelector(
+    (state: AppState) => state.gameProcesses.value
+  );
+  const archives = useSelector((state: AppState) =>
+    state.archives.value);
   return (
+    <Layout>
+      <Header className="header">
+        <div className="logo" />
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          defaultSelectedKeys={["2"]}
+          items={items1}
+        />
+      </Header>
       <Layout>
-        <Header className="header">
-          <div className="logo" />
+        <Sider width={200} style={{ background: colorBgContainer }}>
           <Menu
-            theme="dark"
-            mode="horizontal"
-            defaultSelectedKeys={["2"]}
-            items={items1}
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            defaultOpenKeys={["sub1"]}
+            style={{ height: "100%", borderRight: 0 }}
+            items={items2}
           />
-        </Header>
-        <Layout>
-          <Sider width={200} style={{ background: colorBgContainer }}>
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={["1"]}
-              defaultOpenKeys={["sub1"]}
-              style={{ height: "100%", borderRight: 0 }}
-              items={items2}
-            />
-          </Sider>
-          <Layout style={{ padding: "1em" }}>
-            <Content>{ArchiveCardGroups()}</Content>
-          </Layout>
+        </Sider>
+        <Layout style={{ padding: "1em" }}>
+          <Content>
+            {archives.map((archiveName) => {
+              const serverProcesses = gameProcesses.filter(
+                (v) => v.archive == archiveName
+              );
+              return (
+                <ArchiveCard
+                  servers={serverProcesses}
+                  archive={archiveName}
+                  key={`${archiveName}`}
+                ></ArchiveCard>
+              );
+            })}
+          </Content>
         </Layout>
       </Layout>
+    </Layout>
   );
 };
-// export default App;
-connect(state => state)(App)
-export default wapper.withRedux(App);
+export default App;
 
-export const getServerSideProps: GetServerSideProps = wapper.getServerSideProps(
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   (store) => async (content) => {
     const archives = await listArchive();
     const gameProcesses = await listGameProcess();

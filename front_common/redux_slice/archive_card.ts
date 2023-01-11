@@ -6,33 +6,31 @@ import {
 
 export const gameProcessesSlice = createSlice({
   name: "gameProcesses",
-  initialState: {
-    value: {
-      servers: [] as GameProcess[],
-    },
-  },
+  initialState: { value: [] as GameProcess[] },
   reducers: {
     update(state, action) {
-      const server = state.value.servers.find(
+      const serverIndex = state.value.findIndex(
         (v) =>
           v.archive === action.payload.archive &&
           v.serverType === action.payload.serverType
       );
-      if (server) {
-        server.serverStatus = action.payload.serverStatus;
+      if (serverIndex >= 0) {
+        state.value[serverIndex] = action.payload;
       }
     },
     updateAll(state, action) {
-        state.value = action.payload;
+      state.value = action.payload;
     }
   },
-  extraReducers: {
-    [HYDRATE]: (state, action) => {
-      return {
-        ...state,
-        ...action.payload.gameProcesses,
-      };
-    },
+  extraReducers: (builder) => {
+    builder.addDefaultCase((state, action) => {
+      if (action.type === HYDRATE) {
+        return {
+          ...state,
+          ...action.payload.gameProcesses,
+        };
+      }
+    });
   },
 });
 
