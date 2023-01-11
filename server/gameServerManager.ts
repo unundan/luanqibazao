@@ -53,8 +53,7 @@ export function listGameProcess(): Promise<GameProcess[]> {
   });
 }
 
-const userHome = "/root";
-const archiveDir = path.resolve(userHome, ".klei", "DoNotStarveTogether");
+const archiveDir = process.platform === 'win32'? path.resolve(process.env.HOME || '/', 'Documents', 'Klei') : path.resolve("/root", ".klei", "DoNotStarveTogether");
 const serverBin = "/root/DSTDedicatedServer/bin64";
 
 export async function listArchive(): Promise<string[]> {
